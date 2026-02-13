@@ -4,10 +4,11 @@ Personal desktop tool: press a hotkey, it captures the screen, detects any QR co
 
 ## Stack
 - **Language:** Python
-- **GUI:** PyQt6 / PySide6 (for system tray + hotkey)
-- **QR decoding:** pyzbar (or OpenCV fallback)
-- **Screen capture:** mss (fast, cross-platform) or Pillow's ImageGrab
-- **Clipboard:** pyperclip or Qt's built-in clipboard
+- **GUI:** PyQt6 (toast notifications)
+- **QR decoding:** pyzbar
+- **Screen capture:** mss
+- **Clipboard:** pyperclip
+- **Hotkey:** AutoHotkey v2 (external, Ctrl+Shift+Q)
 - **Packaging:** PyInstaller (single .exe for Windows)
 
 ## Phase 1: MVP (hotkey → scan → clipboard)
@@ -19,11 +20,10 @@ Personal desktop tool: press a hotkey, it captures the screen, detects any QR co
 - [x] Add basic console output confirming what was found/copied
 
 ## Phase 2: Desktop Integration
-- [ ] System tray icon (PyQt6) — app lives in tray, no main window
-- [ ] Global hotkey registration (e.g. Ctrl+Shift+Q)
-- [ ] Toast notification on success ("Copied: <text preview>")
-- [ ] Toast notification on failure ("No QR code found")
-- [ ] Handle multiple QR codes: copy all, separated by newlines (or pick largest)
+- [x] Global hotkey via AHK v2 (Ctrl+Shift+Q → runs scan)
+- [x] Toast notification on success ("Copied: <text preview>")
+- [x] Toast notification on failure ("No QR code found")
+- [x] Handle multiple QR codes: copy all, separated by newlines
 
 ## Phase 3: Quality of Life
 - [ ] Scan history (last N scans, viewable from tray menu)

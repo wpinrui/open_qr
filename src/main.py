@@ -1,30 +1,28 @@
+import sys
+
 from src.capture import grab_screen
 from src.decoder import find_qr_codes
 from src.clipboard import copy_to_clipboard
+from src.notify import show_notification
 
 
 def scan() -> None:
     """Capture screen, detect QR codes, copy results to clipboard."""
-    print("Capturing screen...")
     image = grab_screen()
-
-    print("Scanning for QR codes...")
     codes = find_qr_codes(image)
 
     if not codes:
-        print("No QR codes found.")
+        show_notification("No QR code found", is_error=True)
         return
 
     result = "\n".join(codes)
     copy_to_clipboard(result)
 
-    count = len(codes)
-    if count == 1:
-        print(f"Found QR code. Copied to clipboard: {codes[0]}")
+    if len(codes) == 1:
+        show_notification(f"Copied: {codes[0]}")
     else:
-        print(f"Found {count} QR codes. Copied all to clipboard:")
-        for i, code in enumerate(codes, 1):
-            print(f"  {i}. {code}")
+        preview = f"{len(codes)} QR codes copied"
+        show_notification(preview)
 
 
 if __name__ == "__main__":
