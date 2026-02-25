@@ -5,12 +5,32 @@ import ctypes
 import ctypes.wintypes
 from pathlib import Path
 
-from PyQt6.QtWidgets import QApplication, QSystemTrayIcon, QMenu, QStyle
+import winreg
+
+from PyQt6.QtWidgets import QApplication, QSystemTrayIcon, QMenu
 from PyQt6.QtCore import QAbstractNativeEventFilter
-from PyQt6.QtGui import QAction
+from PyQt6.QtGui import QAction, QIcon
 
 STARTUP_DIR = Path(os.environ.get("APPDATA", "")) / "Microsoft" / "Windows" / "Start Menu" / "Programs" / "Startup"
 STARTUP_LINK = STARTUP_DIR / "open_qr.exe"
+
+if getattr(sys, "frozen", False):
+    ASSETS_DIR = Path(sys._MEIPASS) / "assets"
+else:
+    ASSETS_DIR = Path(__file__).resolve().parent.parent / "assets"
+
+
+def is_dark_taskbar() -> bool:
+    try:
+        key = winreg.OpenKey(
+            winreg.HKEY_CURRENT_USER,
+            r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize",
+        )
+        value, _ = winreg.QueryValueEx(key, "SystemUsesLightTheme")
+        winreg.CloseKey(key)
+        return value == 0
+    except OSError:
+        return True
 
 try:
     from src.capture import grab_screen
@@ -49,8 +69,8 @@ class TrayApp:
         self.app.setQuitOnLastWindowClosed(False)
 
         self.tray = QSystemTrayIcon()
-        icon = self.app.style().standardIcon(QStyle.StandardPixmap.SP_ComputerIcon)
-        self.tray.setIcon(icon)
+        icon_name = "scanner_light.ico" if is_dark_taskbar() else "scanner.ico"
+        self.tray.setIcon(QIcon(str(ASSETS_DIR / icon_name)))
         self.tray.setToolTip("open_qr — Ctrl+Shift+Q to scan")
 
         menu = QMenu()
