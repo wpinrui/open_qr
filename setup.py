@@ -26,11 +26,14 @@ def build_exe() -> bool:
     for dll in find_pyzbar_dlls():
         add_data.extend(["--add-binary", f"{dll};pyzbar"])
 
+    assets_dir = PROJECT_DIR / "assets"
     cmd = [
         sys.executable, "-m", "PyInstaller",
         "--onefile",
         "--windowed",
         "--name", "open_qr",
+        "--icon", str(assets_dir / "scanner.ico"),
+        "--add-data", f"{assets_dir};assets",
         "--clean",
         *add_data,
         str(PROJECT_DIR / "src" / "main.py"),
