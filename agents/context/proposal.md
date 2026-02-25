@@ -32,7 +32,7 @@ Personal desktop tool: press a hotkey, it captures the screen, detects any QR co
 - [ ] Scan history (last N scans, viewable from tray menu)
 - [ ] Multi-monitor support (capture all screens)
 - [ ] Configurable hotkey
-- [ ] Auto-start on Windows login (optional)
+- [x] Auto-start on Windows login (toggle in tray menu)
 
 ## Future Ideas
 - [ ] Region selection mode (drag to select area)
