@@ -10,7 +10,7 @@ Desktop tool that detects any QR code on your screen and copies the decoded text
 ## Setup
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/wpinrui/open_qr.git
 cd open_qr
 python -m venv venv
 venv\Scripts\pip install -r requirements.txt
