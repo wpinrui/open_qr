@@ -1,7 +1,6 @@
 import sys
 
-from PyQt6.QtWidgets import QApplication, QSystemTrayIcon
-from PyQt6.QtGui import QIcon
+from PyQt6.QtWidgets import QApplication, QSystemTrayIcon, QStyle
 from PyQt6.QtCore import QTimer
 
 
@@ -9,9 +8,9 @@ def show_notification(message: str, is_error: bool = False) -> None:
     """Show a Windows toast notification via Qt system tray."""
     app = QApplication(sys.argv)
 
-    # Invisible tray icon just to send the notification
     tray = QSystemTrayIcon()
-    tray.setIcon(QIcon())
+    icon = app.style().standardIcon(QStyle.StandardPixmap.SP_ComputerIcon)
+    tray.setIcon(icon)
     tray.setVisible(True)
 
     icon_type = (
