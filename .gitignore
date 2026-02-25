@@ -10,3 +10,5 @@ venv/
 *.exe
 open_qr.ahk
 .env
+.claude/
+agents/
