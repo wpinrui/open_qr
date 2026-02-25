@@ -8,4 +8,5 @@ venv/
 .venv/
 *.spec
 *.exe
+open_qr.ahk
 .env

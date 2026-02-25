@@ -3,7 +3,7 @@
 ; open_qr — press Ctrl+Shift+Q to scan screen for QR codes
 ; The decoded text is copied to clipboard automatically.
 
-PROJECT := "C:\Users\Ivan\Documents\projects\open_qr"
+PROJECT := "{{PROJECT_DIR}}"
 PYTHON := PROJECT "\venv\Scripts\pythonw.exe"
 
 ^+q:: {
