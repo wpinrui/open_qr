@@ -1,10 +1,16 @@
+import os
+import shutil
 import sys
 import ctypes
 import ctypes.wintypes
+from pathlib import Path
 
 from PyQt6.QtWidgets import QApplication, QSystemTrayIcon, QMenu, QStyle
 from PyQt6.QtCore import QAbstractNativeEventFilter
 from PyQt6.QtGui import QAction
+
+STARTUP_DIR = Path(os.environ.get("APPDATA", "")) / "Microsoft" / "Windows" / "Start Menu" / "Programs" / "Startup"
+STARTUP_LINK = STARTUP_DIR / "open_qr.exe"
 
 try:
     from src.capture import grab_screen
@@ -50,9 +56,17 @@ class TrayApp:
         menu = QMenu()
         scan_action = QAction("Scan Now", menu)
         scan_action.triggered.connect(self.scan)
+
+        self.startup_action = QAction("Start on login", menu)
+        self.startup_action.setCheckable(True)
+        self.startup_action.setChecked(STARTUP_LINK.exists())
+        self.startup_action.triggered.connect(self.toggle_startup)
+
         quit_action = QAction("Quit", menu)
         quit_action.triggered.connect(self.quit)
         menu.addAction(scan_action)
+        menu.addSeparator()
+        menu.addAction(self.startup_action)
         menu.addSeparator()
         menu.addAction(quit_action)
 
@@ -101,6 +115,56 @@ class TrayApp:
         self.tray.showMessage(
             "open_qr", msg, QSystemTrayIcon.MessageIcon.Information, 3000
         )
+
+    def toggle_startup(self, checked):
+        exe_path = Path(sys.executable)
+        if getattr(sys, "frozen", False):
+            exe_path = Path(sys.executable)
+        else:
+            # Running from source — nothing to copy
+            self.startup_action.setChecked(False)
+            self.tray.showMessage(
+                "open_qr",
+                "Start on login only works from the packaged .exe",
+                QSystemTrayIcon.MessageIcon.Warning,
+                3000,
+            )
+            return
+
+        if checked:
+            try:
+                shutil.copy2(exe_path, STARTUP_LINK)
+                self.tray.showMessage(
+                    "open_qr",
+                    "Will start on login",
+                    QSystemTrayIcon.MessageIcon.Information,
+                    2000,
+                )
+            except OSError:
+                self.startup_action.setChecked(False)
+                self.tray.showMessage(
+                    "open_qr",
+                    "Failed to add to startup",
+                    QSystemTrayIcon.MessageIcon.Warning,
+                    3000,
+                )
+        else:
+            try:
+                STARTUP_LINK.unlink(missing_ok=True)
+                self.tray.showMessage(
+                    "open_qr",
+                    "Removed from startup",
+                    QSystemTrayIcon.MessageIcon.Information,
+                    2000,
+                )
+            except OSError:
+                self.startup_action.setChecked(True)
+                self.tray.showMessage(
+                    "open_qr",
+                    "Failed to remove from startup",
+                    QSystemTrayIcon.MessageIcon.Warning,
+                    3000,
+                )
 
     def quit(self):
         ctypes.windll.user32.UnregisterHotKey(None, HOTKEY_ID)
